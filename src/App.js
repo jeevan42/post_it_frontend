@@ -9,7 +9,6 @@ import EditPost from './components/EditPost';
 import SinglePost from './components/SinglePost';
 
 function App() {
-  const token = localStorage.getItem('token');
     return (
         <Router>
             <Header />
