@@ -3,11 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Make sure this is imported
 
 function Header() {
-    const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/login');
+        localStorage.clear();
+        window.location.href = '/login';
     };
 
     const isLoggedIn = !!localStorage.getItem('token');

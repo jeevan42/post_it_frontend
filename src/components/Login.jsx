@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import API from '../api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import { notifyError, notifySuccess } from '../toastNotification';
 
 const Login = () => {
-    const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission
 
     const formik = useFormik({
@@ -25,8 +24,9 @@ const Login = () => {
                 const response = await API.post('/auth/login', values);
                 if (response?.data?.code === 200) {
                     notifySuccess(response?.data?.message);
-                    localStorage.setItem('token', response?.data?.data);
-                    navigate('/');
+                    localStorage.setItem('token', response?.data?.data?.token);
+                    localStorage.setItem('userId', response?.data?.data?.id);
+                    window.location.href = '/';
                 } else {
                     notifyError(response?.data?.message);
                 }

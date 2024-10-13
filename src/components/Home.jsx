@@ -2,18 +2,32 @@ import React, { useEffect, useState } from 'react';
 import API from '../api';
 import { Link } from 'react-router-dom';
 import { notifyError } from '../toastNotification';
-import { Card, CardContent, CardActions, Typography, Button, Grid, CircularProgress, Container } from '@mui/material';
+import {
+    Card,
+    CardContent,
+    CardActions,
+    Typography,
+    Button,
+    Grid,
+    CircularProgress,
+    Container,
+    Box,
+} from '@mui/material';
 
 function Home() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true); // To manage loading state
+    const [currentPage, setCurrentPage] = useState(1); // Current page
+    const [totalPosts, setTotalPosts] = useState(0); // Total number of posts
+    const postsPerPage = 1; // Number of posts per page
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await API.get('/posts/all-posts');
+                const response = await API.get(`/posts/all-posts?offset=${currentPage}&limit=${postsPerPage}`);
                 if (response?.data?.code === 200) {
                     setPosts(response?.data?.data || []); // Use empty array if data is undefined/null
+                    setTotalPosts(response?.data?.total || 0); // Get total posts count
                 } else {
                     notifyError(response?.data?.message || 'Failed to fetch posts');
                 }
@@ -24,7 +38,17 @@ function Home() {
             }
         };
         fetchPosts();
-    }, []);
+    }, [currentPage]); // Fetch posts whenever the current page changes
+
+    // Calculate total number of pages
+    const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+    // Handle page change
+    const handlePageChange = (page) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     return (
         <Container>
@@ -62,6 +86,25 @@ function Home() {
                     No blog posts available.
                 </Typography>
             )}
+
+            {/* Pagination Controls */}
+            <Box display="flex" justifyContent="center" marginTop={4}>
+                <Button 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </Button>
+                <Typography variant="h6" style={{ margin: '0 10px' }}>
+                    Page {currentPage} of {totalPages}
+                </Typography>
+                <Button 
+                    onClick={() => handlePageChange(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </Button>
+            </Box>
         </Container>
     );
 }

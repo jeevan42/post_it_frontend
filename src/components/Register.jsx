@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import API from '../api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import { notifyError, notifySuccess } from '../toastNotification';
 
 const Register = () => {
-    const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission
 
     const formik = useFormik({
@@ -22,16 +21,15 @@ const Register = () => {
             password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
         }),
         onSubmit: async (values) => {
-            const response = await API.post('/auth/register', values);
-                console.log(`/auth/register response`, response);
             setIsSubmitting(true);
             try {
                 const response = await API.post('/auth/register', values);
                 console.log(`/auth/register response`, response);
                 if (response?.data?.code === 200) {
                     notifySuccess(response?.data?.message)
-                    localStorage.setItem('token', response?.token);
-                    navigate('/');
+                    localStorage.setItem('token', response?.data?.data?.token);
+                    localStorage.setItem('userId', response?.data?.data?.id);
+                    window.location.href = '/';
                 } else {
                     notifyError(response?.data?.message)
                 }

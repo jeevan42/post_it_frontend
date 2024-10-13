@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
 import Login from './components/Login';
@@ -9,16 +9,30 @@ import EditPost from './components/EditPost';
 import SinglePost from './components/SinglePost';
 
 function App() {
+    const token = localStorage.getItem('token');
+
     return (
         <Router>
-            <Header />
+            {token && <Header />} {/* Show Header only if the user is logged in */}
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/create" element={<CreatePost />} />
-                <Route path="/edit/:id" element={<EditPost />} />
-                <Route path="/post/:id" element={<SinglePost />} />
+                {/* Public Routes */}
+                {!token ? (
+                    <>
+                        <Route path="/" element={<Navigate to="/login" />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                    </>
+                ) : (
+                    <>
+                        {/* Protected Routes */}
+                        <Route path="/" element={<Home />} />
+                        <Route path="/create" element={<CreatePost />} />
+                        <Route path="/edit/:id" element={<EditPost />} />
+                        <Route path="/post/:id" element={<SinglePost />} />
+                        {/* Add a fallback for any unmatched routes */}
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </>
+                )}
             </Routes>
         </Router>
     );

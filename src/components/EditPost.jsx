@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import API from '../api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { notifySuccess, notifyError } from '../toastNotification'; // Import notification functions
-import { Container, Typography } from '@mui/material';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 
 const EditPost = () => {
     const { id } = useParams(); // Get the post ID from the URL
@@ -17,10 +17,11 @@ const EditPost = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await API.get(`/posts/${id}`);
-                if(response?.data?.code === 200){
-                    setPost(response?.data);
-                }else{
+                const response = await API.get(`/posts/get-post/${id}`);
+                // console.log(`update post /posts/get-post/`, response)
+                if (response?.data?.code === 200) {
+                    setPost(response?.data?.data);
+                } else {
                     notifyError(response?.data?.message);
                 }
             } catch (err) {
@@ -47,7 +48,8 @@ const EditPost = () => {
         onSubmit: async (values) => {
             setIsSubmitting(true); // Set form as submitting
             try {
-                const response = await API.put(`/posts/${id}`, values); // Send PUT request to update post
+                const response = await API.put(`/posts/update-post/${id}`, values); // Send PUT request to update post
+                console.log(`update post /posts/update-post/`, response)
                 if (response?.data?.code === 200) {
                     notifySuccess(response?.data?.message);
                     navigate(`/post/${id}`); // Redirect to the single post page
@@ -63,8 +65,13 @@ const EditPost = () => {
         },
     });
 
-    if (loading) return <div>Loading...</div>; // Show loading state until post is fetched
-
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+                <CircularProgress />
+            </Box>
+        );
+    }
     return (
         <Container maxWidth="sm" style={{ marginTop: '50px' }}>
             <Typography variant="h4" gutterBottom>
