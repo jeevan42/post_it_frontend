@@ -24,7 +24,7 @@ const Register = () => {
             setIsSubmitting(true);
             try {
                 const response = await API.post('/auth/register', values);
-                console.log(`/auth/register response`, response);
+                // console.log(`/auth/register response`, response);
                 if (response?.data?.code === 200) {
                     notifySuccess(response?.data?.message)
                     localStorage.setItem('token', response?.data?.data?.token);

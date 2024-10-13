@@ -62,6 +62,24 @@ function Home() {
         setCurrentPage(1); // Reset to first page when limit changes
     };
 
+    // Handle like/unlike post
+    const handleLikePost = async (postId, isLiked) => {
+        try {
+            // const response = await API.post(`/posts/like-post/${postId}`);
+            // if (response?.data?.code === 200) {
+                setPosts((prevPosts) =>
+                    prevPosts.map((post) =>
+                        post?._id === postId ? { ...post, isLiked: !isLiked } : post
+                    )
+                )
+            // } else {
+            //     notifyError(response?.data?.message || 'Failed to update your action on post');
+            // }
+        } catch (error) {
+            notifyError(error?.response?.data?.message || 'An error occurred while liking the post');
+        }
+    };
+
     return (
         <Container>
             <Typography variant="h3" gutterBottom align="center" mt={4}>
@@ -75,19 +93,30 @@ function Home() {
             ) : posts.length > 0 ? (
                 <Grid container spacing={4} mt={2}>
                     {posts.map((post) => (
-                        <Grid item xs={12} sm={6} md={4} key={post._id}>
+                        <Grid item xs={12} sm={6} md={4} key={post?._id}>
                             <Card>
                                 <CardContent>
                                     <Typography variant="h5" gutterBottom>
-                                        {post.title}
+                                        {post?.title}
                                     </Typography>
                                     <Typography variant="body2" color="textSecondary">
-                                        {post.content.slice(0, 100)}...
+                                        {post?.content.slice(0, 100)}...
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small" color="primary" component={Link} to={`/post/${post._id}`}>
+                                    <Button size="small" color="primary" component={Link} to={`/post/${post?._id}`}>
                                         View post
+                                    </Button>
+                                    <Button
+                                        size="small"
+                                        color="secondary"
+                                        onClick={() => handleLikePost(post?._id, post?.isLiked)} // Toggle like
+                                    >
+                                        {post?.isLiked ? (
+                                            <i className="bi bi-heart-fill" style={{ color: 'red' }}></i> // Filled heart
+                                        ) : (
+                                            <i className="bi bi-heart" style={{ color: 'black' }}></i> // Unfilled heart
+                                        )}
                                     </Button>
                                 </CardActions>
                             </Card>
@@ -118,7 +147,6 @@ function Home() {
                     Next
                 </Button>
             </Box>
-              
             {/* Select for Posts Limit */}
             <FormControl variant="outlined" fullWidth>
                 <InputLabel id="posts-per-page-label">Posts Per Page</InputLabel>

@@ -49,7 +49,7 @@ const EditPost = () => {
             setIsSubmitting(true); // Set form as submitting
             try {
                 const response = await API.put(`/posts/update-post/${id}`, values); // Send PUT request to update post
-                console.log(`update post /posts/update-post/`, response)
+                // console.log(`update post /posts/update-post/`, response)
                 if (response?.data?.code === 200) {
                     notifySuccess(response?.data?.message);
                     navigate(`/post/${id}`); // Redirect to the single post page

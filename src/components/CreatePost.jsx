@@ -25,10 +25,10 @@ const CreatePost = () => {
                 const response = await API.post('/posts/create-post', values);
                 // console.log(`/posts/create-post`, response);
 
-                if(response?.data?.code === 200){
+                if (response?.data?.code === 200) {
                     notifySuccess(response?.data?.message);
                     navigate('/');
-                }else{
+                } else {
                     notifyError(response?.data?.msg);
                 }
             } catch (err) {
@@ -42,49 +42,49 @@ const CreatePost = () => {
 
     return (
         <Container maxWidth="sm" style={{ marginTop: '50px' }}>
-        <Typography variant="h4" gutterBottom>
-            Create Post
-        </Typography>
-        <form onSubmit={formik.handleSubmit}>
-            <input
-                type="text"
-                name="title"
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Title"
-                style={{ width: '100%', padding: '10px', margin: '10px 0' }}
-            />
-            {formik.touched.title && formik.errors.title ? (
-                <div style={{ color: 'red' }}>{formik.errors.title}</div>
-            ) : null}
+            <Typography variant="h4" gutterBottom>
+                Create Post
+            </Typography>
+            <form onSubmit={formik.handleSubmit}>
+                <input
+                    type="text"
+                    name="title"
+                    value={formik.values.title}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="Title"
+                    style={{ width: '100%', padding: '10px', margin: '10px 0' }}
+                />
+                {formik.touched.title && formik.errors.title ? (
+                    <div style={{ color: 'red' }}>{formik.errors.title}</div>
+                ) : null}
 
-            <textarea
-                name="content"
-                value={formik.values.content}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Content"
-                style={{ width: '100%', padding: '10px', margin: '10px 0' }}
-            />
-            {formik.touched.content && formik.errors.content ? (
-                <div style={{ color: 'red' }}>{formik.errors.content}</div>
-            ) : null}
+                <textarea
+                    name="content"
+                    value={formik.values.content}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="Content"
+                    style={{ width: '100%', padding: '10px', margin: '10px 0' }}
+                />
+                {formik.touched.content && formik.errors.content ? (
+                    <div style={{ color: 'red' }}>{formik.errors.content}</div>
+                ) : null}
 
-            <button
-                type="submit"
-                disabled={isSubmitting} // Disable button when submitting
-                style={{
-                    padding: '10px 20px',
-                    backgroundColor: isSubmitting ? 'grey' : 'blue',
-                    color: 'white',
-                    border: 'none',
-                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                }}
-            >
-                {isSubmitting ? 'Submitting...' : 'Create Post'}
-            </button>
-        </form>
+                <button
+                    type="submit"
+                    disabled={isSubmitting} // Disable button when submitting
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: isSubmitting ? 'grey' : 'blue',
+                        color: 'white',
+                        border: 'none',
+                        cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    }}
+                >
+                    {isSubmitting ? 'Submitting...' : 'Create Post'}
+                </button>
+            </form>
         </Container>
     );
 };
