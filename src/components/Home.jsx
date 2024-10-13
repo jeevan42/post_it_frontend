@@ -12,6 +12,10 @@ import {
     CircularProgress,
     Container,
     Box,
+    MenuItem,
+    Select,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
 
 function Home() {
@@ -19,12 +23,14 @@ function Home() {
     const [loading, setLoading] = useState(true); // To manage loading state
     const [currentPage, setCurrentPage] = useState(1); // Current page
     const [totalPosts, setTotalPosts] = useState(0); // Total number of posts
-    const postsPerPage = 1; // Number of posts per page
+    const [postsPerPage, setPostsPerPage] = useState(10); // Number of posts per page
 
     useEffect(() => {
         const fetchPosts = async () => {
+            setLoading(true); // Start loading
             try {
-                const response = await API.get(`/posts/all-posts?offset=${currentPage}&limit=${postsPerPage}`);
+                const offset = (currentPage - 1) * postsPerPage; // Correctly calculate offset
+                const response = await API.get(`/posts/all-posts?offset=${offset}&limit=${postsPerPage}`);
                 if (response?.data?.code === 200) {
                     setPosts(response?.data?.data || []); // Use empty array if data is undefined/null
                     setTotalPosts(response?.data?.total || 0); // Get total posts count
@@ -38,7 +44,7 @@ function Home() {
             }
         };
         fetchPosts();
-    }, [currentPage]); // Fetch posts whenever the current page changes
+    }, [currentPage, postsPerPage]); // Fetch posts whenever the current page or postsPerPage changes
 
     // Calculate total number of pages
     const totalPages = Math.ceil(totalPosts / postsPerPage);
@@ -46,8 +52,14 @@ function Home() {
     // Handle page change
     const handlePageChange = (page) => {
         if (page > 0 && page <= totalPages) {
-            setCurrentPage(page);
+            setCurrentPage(page); // Update current page
         }
+    };
+
+    // Handle limit change
+    const handleLimitChange = (event) => {
+        setPostsPerPage(event.target.value); // Update posts per page
+        setCurrentPage(1); // Reset to first page when limit changes
     };
 
     return (
@@ -55,6 +67,7 @@ function Home() {
             <Typography variant="h3" gutterBottom align="center" mt={4}>
                 All Blog Posts
             </Typography>
+
             {loading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
                     <CircularProgress />
@@ -105,6 +118,22 @@ function Home() {
                     Next
                 </Button>
             </Box>
+              
+            {/* Select for Posts Limit */}
+            <FormControl variant="outlined" fullWidth>
+                <InputLabel id="posts-per-page-label">Posts Per Page</InputLabel>
+                <Select
+                    labelId="posts-per-page-label"
+                    value={postsPerPage}
+                    onChange={handleLimitChange}
+                    label="Posts Per Page"
+                >
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={15}>15</MenuItem>
+                    <MenuItem value={20}>20</MenuItem>
+                </Select>
+            </FormControl>
         </Container>
     );
 }
